@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Identity &amp; Access Management — A Field Guide</title>
+<meta name="description" content="A beginner-friendly guide to IAM, IGA, PAM, SAML and LDAP and how they connect in a real company.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="nav" id="top">
+  <div class="nav-inner">
+    <a class="brand" href="#top">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2 3 6v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V6l-9-4Z" stroke="currentColor" stroke-width="1.6"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Identity Field Guide
+    </a>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    <nav class="nav-links" id="navLinks">
+      <a href="#iam">IAM</a>
+      <a href="#iga">IGA</a>
+      <a href="#pam">PAM</a>
+      <a href="#saml">SAML</a>
+      <a href="#ldap">LDAP</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#story">Example</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<section class="hero">
+  <div class="hero-text">
+    <p class="kicker">A field guide for people starting in security</p>
+    <h1>Identity &amp; Access<br>Management</h1>
+    <p class="lede">Understanding IAM, IGA, PAM, SAML and LDAP</p>
+    <p class="desc">Every company needs an answer to three questions: who are you, what are you allowed to touch, and how do we protect the accounts that can touch the most. This guide walks through the pieces that answer them — from the broad discipline down to the specific protocols — and how they fit together.</p>
+    <a href="#iam" class="btn">Start learning</a>
+  </div>
+  <div class="hero-diagram" aria-hidden="true">
+    <svg viewBox="0 0 360 300" class="diagram">
+      <g class="node-group">
+        <rect x="130" y="10" width="100" height="46" rx="8" class="box box-user"/>
+        <text x="180" y="38" class="box-label">User</text>
+      </g>
+      <path d="M180 56 V96" class="edge" marker-end="url(#arrow)"/>
+      <g class="node-group">
+        <rect x="115" y="98" width="130" height="46" rx="8" class="box box-idp"/>
+        <text x="180" y="126" class="box-label">Identity Provider</text>
+      </g>
+      <path d="M180 144 V184" class="edge" marker-end="url(#arrow)"/>
+      <g class="node-group">
+        <rect x="120" y="186" width="120" height="46" rx="8" class="box box-app"/>
+        <text x="180" y="214" class="box-label">Applications</text>
+      </g>
+      <path d="M180 232 V270" class="edge edge-dim" marker-end="url(#arrow-dim)"/>
+      <text x="180" y="290" class="micro-label">IAM governs every step above</text>
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="var(--cyan)"/></marker>
+        <marker id="arrow-dim" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="var(--muted)"/></marker>
+      </defs>
+    </svg>
+  </div>
+</section>
+
+<section class="story-block" id="iam">
+  <div class="story-head">
+    <span class="tag tag-iam">IAM</span>
+    <h2>Identity &amp; Access Management</h2>
+    <p class="intro">IAM is the umbrella discipline: creating digital identities, proving people are who they claim to be, and deciding what they're allowed to reach. <abbr title="IGA (identity governance) and PAM (privileged access) are specialized areas that sit inside the wider IAM picture.">IGA and PAM</abbr> are specialized parts of this same picture, not separate worlds.</p>
+  </div>
+  <div class="grid-2">
+    <div>
+      <h3>The core pieces</h3>
+      <ul class="def-list">
+        <li><strong>Identity</strong> — a record representing a person (or a service) in company systems.</li>
+        <li><strong>Authentication</strong> — proving you are who the identity says you are (a password, a key, an app confirmation).</li>
+        <li><strong>Authorization</strong> — deciding what an authenticated identity is permitted to do.</li>
+        <li><strong>Access management</strong> — the ongoing job of granting, adjusting and revoking that access.</li>
+        <li><strong>Identity lifecycle</strong> — everything from the day an identity is created to the day it's retired.</li>
+      </ul>
+    </div>
+    <div class="example-card">
+      <h4>Pedro joins a company</h4>
+      <ol class="steps">
+        <li>An identity is created for Pedro.</li>
+        <li>He receives an account.</li>
+        <li>He's assigned appropriate access.</li>
+        <li>He authenticates through the identity provider.</li>
+        <li>He reaches the applications he's authorized for.</li>
+        <li>When he leaves, his access is revoked.</li>
+      </ol>
+    </div>
+  </div>
+  <svg viewBox="0 0 700 90" class="diagram diagram-flow">
+    <g class="flow-node"><rect x="0" y="20" width="120" height="46" rx="8" class="box box-user"/><text x="60" y="48" class="box-label">User</text></g>
+    <path d="M120 43 H166" class="edge" marker-end="url(#a2)"/>
+    <g class="flow-node"><rect x="168" y="20" width="120" height="46" rx="8" class="box box-idp"/><text x="228" y="48" class="box-label">Identity</text></g>
+    <path d="M288 43 H334" class="edge" marker-end="url(#a2)"/>
+    <g class="flow-node"><rect x="336" y="20" width="120" height="46" rx="8" class="box box-idp"/><text x="396" y="48" class="box-label">Authn</text></g>
+    <path d="M456 43 H502" class="edge" marker-end="url(#a2)"/>
+    <g class="flow-node"><rect x="504" y="20" width="120" height="46" rx="8" class="box box-idp"/><text x="564" y="48" class="box-label">Authz</text></g>
+    <path d="M624 43 c14 0 20 0 20 0" class="edge"/>
+    <defs><marker id="a2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="var(--cyan)"/></marker></defs>
+  </svg>
+  <p class="takeaway"><strong>Key takeaway —</strong> IAM is the broad discipline of managing digital identities and the access tied to them.</p>
+</section>
+
+<section class="story-block alt" id="iga">
+  <div class="story-head">
+    <span class="tag tag-iga">IGA</span>
+    <h2>Identity Governance &amp; Administration</h2>
+    <p class="intro">IGA answers a harder question than "can this person log in?" — it answers <em>what access should this person have, why, who approved it, and when should it end.</em></p>
+  </div>
+  <div class="grid-2">
+    <div>
+      <h3>What IGA covers</h3>
+      <ul class="def-list">
+        <li><strong>Joiner / Mover / Leaver</strong> — the lifecycle events that trigger access changes.</li>
+        <li><strong>Access requests &amp; approvals</strong> — asking for access, and someone signing off on it.</li>
+        <li><strong>Access reviews &amp; certifications</strong> — periodically confirming access is still needed.</li>
+        <li><strong>Provisioning / deprovisioning</strong> — automatically granting or removing accounts.</li>
+        <li><strong><abbr title="Least privilege: giving someone only the access required for their job, nothing extra.">Least privilege</abbr> &amp; audit</strong> — keeping access minimal, and proving it on request.</li>
+      </ul>
+      <p class="muted-note">Platforms in this space include SailPoint, Saviynt and One Identity — different products, same job: governing who has access to what.</p>
+    </div>
+    <div class="example-card">
+      <h4>Maria joins as a developer</h4>
+      <p class="gets">Automatically receives:</p>
+      <ul class="pill-list good"><li>Git repository access</li><li>Dev environment</li><li>Jira access</li></ul>
+      <p class="gets">Does not receive:</p>
+      <ul class="pill-list bad"><li>Production DB admin</li><li>Payroll system</li></ul>
+    </div>
+  </div>
+  <svg viewBox="0 0 700 130" class="diagram">
+    <g><rect x="0" y="42" width="150" height="46" rx="8" class="box box-iga"/><text x="75" y="70" class="box-label">Joiner</text></g>
+    <path d="M150 65 H206" class="edge" marker-end="url(#a3)"/>
+    <g><rect x="208" y="42" width="150" height="46" rx="8" class="box box-iga"/><text x="283" y="70" class="box-label">Mover</text></g>
+    <path d="M358 65 H414" class="edge" marker-end="url(#a3)"/>
+    <g><rect x="416" y="42" width="150" height="46" rx="8" class="box box-iga"/><text x="491" y="70" class="box-label">Leaver</text></g>
+    <text x="0" y="20" class="micro-label">Identity lifecycle</text>
+    <defs><marker id="a3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="var(--cyan)"/></marker></defs>
+  </svg>
+  <p class="takeaway"><strong>Key takeaway —</strong> IGA decides and proves who should have access, and removes it the moment that stops being true.</p>
+</section>
+
+<section class="story-block" id="pam">
+  <div class="story-head">
+    <span class="tag tag-pam">PAM</span>
+    <h2>Privileged Access Management</h2>
+    <p class="intro">Some accounts can do far more damage than a normal login — domain admins, root, database admins, cloud admins. PAM exists to keep those accounts from being a standing risk.</p>
+  </div>
+  <div class="grid-2">
+    <div>
+      <h3>How it's protected</h3>
+      <ul class="def-list">
+        <li><strong><abbr title="Just-in-time: granting elevated access only for the time it's actually needed.">Just-in-time access</abbr></strong> — privileges granted only for the window they're needed.</li>
+        <li><strong>Credential vaulting</strong> — privileged passwords stored and rotated automatically, not memorized.</li>
+        <li><strong>Session monitoring</strong> — privileged sessions are recorded or watched live.</li>
+        <li><strong>Temporary elevation</strong> — access expires on its own instead of lingering.</li>
+      </ul>
+      <p class="muted-note">CyberArk, BeyondTrust and Delinea are common examples of PAM platforms.</p>
+    </div>
+    <div class="example-card">
+      <h4>An employee needs a production server</h4>
+      <ol class="steps">
+        <li>Requests privileged access.</li>
+        <li>Request is approved.</li>
+        <li>Access is granted temporarily.</li>
+        <li>The session is monitored.</li>
+        <li>Privileges are removed once the task is done.</li>
+      </ol>
+    </div>
+  </div>
+  <svg viewBox="0 0 760 90" class="diagram diagram-flow">
+    <g><rect x="0" y="20" width="120" height="46" rx="8" class="box box-user"/><text x="60" y="48" class="box-label">Request</text></g>
+    <path d="M120 43 H166" class="edge" marker-end="url(#a4)"/>
+    <g><rect x="168" y="20" width="120" height="46" rx="8" class="box box-pam"/><text x="228" y="48" class="box-label">Approval</text></g>
+    <path d="M288 43 H334" class="edge" marker-end="url(#a4)"/>
+    <g><rect x="336" y="20" width="150" height="46" rx="8" class="box box-pam"/><text x="411" y="48" class="box-label">Temp access</text></g>
+    <path d="M486 43 H532" class="edge" marker-end="url(#a4)"/>
+    <g><rect x="534" y="20" width="130" height="46" rx="8" class="box box-pam"/><text x="599" y="48" class="box-label">Monitoring</text></g>
+    <path d="M664 43 H710" class="edge" marker-end="url(#a4)"/>
+    <g><rect x="712" y="20" width="0" height="46"/></g>
+    <text x="670" y="80" class="micro-label">→ access removed</text>
+    <defs><marker id="a4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="var(--cyan)"/></marker></defs>
+  </svg>
+  <p class="takeaway"><strong>Key takeaway —</strong> PAM protects the small set of accounts that could otherwise cause the most damage.</p>
+</section>
+
+<section class="story-block alt" id="saml">
+  <div class="story-head">
+    <span class="tag tag-saml">SAML</span>
+    <h2>Security Assertion Markup Language</h2>
+    <p class="intro">SAML is a protocol, not a programming language and not an identity provider itself — it's the format two systems use to tell each other "this user is authenticated," commonly powering single sign-on.</p>
+  </div>
+  <div class="grid-2">
+    <div>
+      <h3>Core concepts</h3>
+      <ul class="def-list">
+        <li><strong><abbr title="Identity Provider: the system that authenticates the user and issues the assertion.">IdP</abbr></strong> — authenticates the user.</li>
+        <li><strong><abbr title="Service Provider: the application the user is trying to reach.">SP</abbr></strong> — the application the user wants to use.</li>
+        <li><strong>Assertion</strong> — the signed statement the IdP hands the SP, saying who the user is.</li>
+        <li><strong><abbr title="Single Sign-On: one login session that grants access to multiple applications.">SSO</abbr></strong> — one login, many applications.</li>
+      </ul>
+      <p class="muted-note">Entra ID, Okta, Ping Identity and Keycloak are common SAML-capable identity providers.</p>
+    </div>
+    <div class="example-card">
+      <h4>Reaching Salesforce through Okta</h4>
+      <p class="lede-small">"The IdP authenticates the user, and the Service Provider trusts the IdP's assertion."</p>
+    </div>
+  </div>
+  <svg viewBox="0 0 300 320" class="diagram">
+    <g><rect x="90" y="0" width="120" height="46" rx="8" class="box box-user"/><text x="150" y="28" class="box-label">User</text></g>
+    <path d="M150 46 V86" class="edge" marker-end="url(#a5)"/>
+    <text x="160" y="70" class="micro-label">wants access</text>
+    <g><rect x="60" y="88" width="180" height="46" rx="8" class="box box-saml"/><text x="150" y="116" class="box-label">Salesforce (SP)</text></g>
+    <path d="M150 134 V174" class="edge" marker-end="url(#a5)"/>
+    <text x="180" y="158" class="micro-label">redirects to</text>
+    <g><rect x="60" y="176" width="180" height="46" rx="8" class="box box-idp"/><text x="150" y="204" class="box-label">Okta (IdP)</text></g>
+    <path d="M150 222 V262" class="edge" marker-end="url(#a5)"/>
+    <text x="185" y="246" class="micro-label">SAML assertion</text>
+    <g><rect x="60" y="264" width="180" height="46" rx="8" class="box box-saml"/><text x="150" y="292" class="box-label">Access granted</text></g>
+    <defs><marker id="a5" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="var(--cyan)"/></marker></defs>
+  </svg>
+  <p class="takeaway"><strong>Key takeaway —</strong> SAML lets one trusted login work across many applications, without each one checking passwords itself.</p>
+</section>
+
+<section class="story-block" id="ldap">
+  <div class="story-head">
+    <span class="tag tag-ldap">LDAP</span>
+    <h2>Lightweight Directory Access Protocol</h2>
+    <p class="intro">LDAP is a protocol for reading and managing directory information — the users, groups and attributes an organization keeps in one place. Active Directory supports LDAP, but the two are not the same thing.</p>
+  </div>
+  <div class="grid-2">
+    <div>
+      <h3>Directory building blocks</h3>
+      <ul class="def-list">
+        <li><strong>Entry</strong> — one record in the directory, such as a user.</li>
+        <li><strong><abbr title="Distinguished Name: the full, unique path that identifies one entry in the directory tree.">DN</abbr></strong> — the unique path identifying that entry.</li>
+        <li><strong>Attribute</strong> — a field on an entry, like an email address.</li>
+        <li><strong>Group</strong> — a named collection of entries.</li>
+      </ul>
+    </div>
+    <div class="example-card">
+      <h4>Company directory tree</h4>
+      <pre class="dn-tree"><code>dc=company,dc=com
+  ou=employees
+    cn=Pedro
+      mail=pedro@company.com</code></pre>
+      <p class="lede-small">An application can query this tree to look up Pedro's email or group membership.</p>
+    </div>
+  </div>
+  <p class="takeaway"><strong>Key takeaway —</strong> LDAP is how systems read and manage directory data — it's a protocol, not a product, and not the same thing as Active Directory.</p>
+</section>
+
+<section class="story-block alt" id="architecture">
+  <div class="story-head">
+    <h2>How it all connects</h2>
+    <p class="intro">In a real company these pieces work together rather than replacing one another.</p>
+  </div>
+  <svg viewBox="0 0 760 340" class="diagram diagram-arch">
+    <g><rect x="300" y="0" width="160" height="46" rx="8" class="box box-user"/><text x="380" y="28" class="box-label">Users</text></g>
+    <path d="M380 46 V86" class="edge" marker-end="url(#a6)"/>
+    <text x="395" y="72" class="micro-label">authenticate</text>
+    <g><rect x="290" y="88" width="180" height="46" rx="8" class="box box-idp"/><text x="380" y="116" class="box-label">IdP (Okta / Entra)</text></g>
+    <path d="M380 134 V174" class="edge" marker-end="url(#a6)"/>
+    <text x="405" y="158" class="micro-label">SAML / OIDC</text>
+    <g><rect x="120" y="176" width="150" height="42" rx="8" class="box box-saml"/><text x="195" y="202" class="box-label">Applications</text></g>
+    <g><rect x="305" y="176" width="150" height="42" rx="8" class="box box-saml"/><text x="380" y="202" class="box-label">Cloud services</text></g>
+    <g><rect x="490" y="176" width="150" height="42" rx="8" class="box box-saml"/><text x="565" y="202" class="box-label">SaaS</text></g>
+    <path d="M380 134 V246" class="edge edge-dim" marker-end="url(#a6d)"/>
+    <g><rect x="300" y="248" width="160" height="46" rx="8" class="box box-iam"/><text x="380" y="276" class="box-label">IAM</text></g>
+    <path d="M340 294 V318" class="edge" marker-end="url(#a6)"/>
+    <path d="M420 294 V318" class="edge" marker-end="url(#a6)"/>
+    <g><rect x="240" y="320" width="120" height="0"/></g>
+    <text x="290" y="332" class="micro-label">IGA — governance</text>
+    <text x="470" y="332" class="micro-label">PAM — privileged access</text>
+    <g><rect x="20" y="88" width="160" height="46" rx="8" class="box box-ldap"/><text x="100" y="116" class="box-label">LDAP / AD</text></g>
+    <path d="M180 111 H286" class="edge edge-dim" marker-end="url(#a6d)"/>
+    <defs>
+      <marker id="a6" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="var(--cyan)"/></marker>
+      <marker id="a6d" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="var(--muted)"/></marker>
+    </defs>
+  </svg>
+  <p class="caption">LDAP/Active Directory hold identity data, the IdP authenticates against it via SAML/OIDC, and IAM — with IGA and PAM underneath — governs what happens next.</p>
+</section>
+
+<section class="story-block" id="compare">
+  <div class="story-head"><h2>Comparing the concepts</h2></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Concept</th><th>Main purpose</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td><span class="tag tag-iam">IAM</span></td><td>Manage identities and access</td><td>Entra ID</td></tr>
+        <tr><td><span class="tag tag-iga">IGA</span></td><td>Govern identities and access</td><td>SailPoint</td></tr>
+        <tr><td><span class="tag tag-pam">PAM</span></td><td>Protect privileged access</td><td>CyberArk</td></tr>
+        <tr><td><span class="tag tag-saml">SAML</span></td><td>Authentication / SSO federation</td><td>Okta ↔ Salesforce</td></tr>
+        <tr><td><span class="tag tag-ldap">LDAP</span></td><td>Access directory information</td><td>Active Directory</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="muted-note">These aren't interchangeable — each solves a different part of the identity problem.</p>
+</section>
+
+<section class="story-block alt" id="story">
+  <div class="story-head">
+    <h2>A day in the life of an employee</h2>
+    <p class="intro">Pedro joins a technology company. Here's every system that touches his access, in order.</p>
+  </div>
+  <ol class="timeline">
+    <li><span>HR creates the employee record.</span></li>
+    <li><span><strong>IGA</strong> provisions the identity.</span></li>
+    <li><span><strong>LDAP / Active Directory</strong> stores his directory information.</span></li>
+    <li><span>The <strong>IdP</strong> authenticates Pedro.</span></li>
+    <li><span><strong>SAML</strong> provides SSO to enterprise applications.</span></li>
+    <li><span><strong>IAM</strong> controls what he can reach.</span></li>
+    <li><span>Pedro requests temporary production access.</span></li>
+    <li><span><strong>PAM</strong> grants temporary privileged access, then removes it.</span></li>
+    <li><span>Pedro leaves the company.</span></li>
+    <li><span><strong>IGA</strong> triggers deprovisioning — access is revoked.</span></li>
+  </ol>
+</section>
+
+<section class="story-block" id="continue">
+  <div class="story-head"><h2>Continue learning</h2></div>
+  <ul class="chip-list">
+    <li>OAuth 2.0</li><li>OpenID Connect (OIDC)</li><li>Active Directory</li><li>SCIM</li><li>RBAC</li><li>ABAC</li>
+    <li>Zero Trust</li><li>Identity Federation</li><li>Identity Lifecycle Management</li>
+    <li>SailPoint</li><li>Microsoft Entra ID</li><li>Okta</li><li>CyberArk</li><li>Keycloak</li>
+  </ul>
+</section>
+
+</main>
+
+<footer class="site-footer">Built as a personal IAM learning project.</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
